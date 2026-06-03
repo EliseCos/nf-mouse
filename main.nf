@@ -145,6 +145,7 @@ workflow {
         ch_after_eddy = PREPROC_SINGLEEDDY.out.dwi_corrected.join(
             PREPROC_SINGLEEDDY.out.bval_corrected).join(
             PREPROC_SINGLEEDDY.out.bvec_corrected)
+        ch_multiqc_files = ch_multiqc_files.mix(PREPROC_SINGLEEDDY.out.eddy_fd_mqc)
     }
     else {
         ch_after_eddy = ch_eddy

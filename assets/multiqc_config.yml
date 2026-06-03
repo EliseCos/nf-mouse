@@ -7,14 +7,19 @@ report_section_order:
     order: -200
   pre_qc_sampling_mqc:
     order: -300
-  registration_qc:
+  framewise_displacement:
     order: -500
-  dti_qc:
+  registration_qc:
     order: -600
+  dti_qc:
+    order: -700
   tracking_mask_qc:
-    order: -700    
+    order: -800    
   tracking_qc:
-    order: -800
+    order: -900
+
+modules_order:
+  - framewise_displacement
 
 custom_data:
   pre_qc_rgb:
@@ -90,3 +95,9 @@ sp:
     fn: "*_mask_tracking_mqc.png"
   tracking_qc:
     fn: "*local_tracking_mqc.png"
+  
+# Customisable module parameters
+framewise_displacement:
+  warn_threshold: 0.05
+  fail_threshold: 0.12
+  unit: "µm"
