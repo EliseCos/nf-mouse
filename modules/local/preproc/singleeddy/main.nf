@@ -46,7 +46,7 @@ process PREPROC_SINGLEEDDY {
     mv ${prefix}__.nii.gz ${prefix}__dwi_eddy_corrected.nii.gz
 	mv ${prefix}__.eddy_rotated_bvecs ${prefix}__dwi_eddy_corrected.bvec
     mv ${bval} ${prefix}__dwi_eddy_corrected.bval
-    mv ${prefix}__dwi_eddy_corrected.eddy_restricted_movement_rms ${prefix}__dwi_eddy_restricted_movement_rms.txt
+    mv ${prefix}__.eddy_restricted_movement_rms ${prefix}__dwi_eddy_restricted_movement_rms.txt
 
 
     cat <<-END_VERSIONS > versions.yml
