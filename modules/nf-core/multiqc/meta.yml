@@ -15,6 +15,12 @@ tools:
       licence:
         - "GPL-3.0-or-later"
       identifier: biotools:multiqc
+  - neuroimaging:
+      description: |
+        Neuroimaging is a python MultiQC plugin containing various tools for generating QC reports for neuroimaging data.
+      homepage: https://github.com/nf-neuro/MultiQC_neuroimaging
+      licence: ["MIT"]
+      identifier: ""
 input:
   - - meta:
         type: map
