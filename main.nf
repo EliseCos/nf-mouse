@@ -15,6 +15,7 @@ include { RECONST_FODF } from './modules/nf-neuro/reconst/fodf/main.nf'
 include { RECONST_QBALL } from './modules/nf-neuro/reconst/qball/main.nf'
 include { TRACKING_MASK } from './modules/local/tracking/mask/main.nf'
 include { TRACKING_LOCALTRACKING } from './modules/nf-neuro/tracking/localtracking/main.nf'
+include { MOUSE_TRACTOGRAMFILTER as FORNIX_BUNDLE} from './modules/local/mouse/tractogramfilter/main.nf'
 include { MOUSE_EXTRACTMASKS } from './modules/local/mouse/extractmasks/main.nf'
 include { MOUSE_VOLUMEROISTATS } from './modules/local/mouse/volumeroistats/main.nf'
 include { STATS_METRICSINROI as STATS_AMBA } from './modules/nf-neuro/stats/metricsinroi/main'
@@ -239,6 +240,12 @@ workflow {
                     .join(reconst_sh)
                     .join(TRACKING_MASK.out.seeding_mask))
         ch_multiqc_files = ch_multiqc_files.mix(TRACKING_LOCALTRACKING.out.mqc)
+
+        ch_for_filter = MOUSE_REGISTRATION.out.ANO
+                        .join(TRACKING_LOCALTRACKING.out.trk)
+
+        FORNIX_BUNDLE(ch_for_filter)
+        ch_multiqc_files = ch_multiqc_files.mix(FORNIX_BUNDLE.out.mqc)
     }
 
     MOUSE_EXTRACTMASKS(MOUSE_REGISTRATION.out.ANO)

@@ -5,30 +5,55 @@ process MOUSE_TRACTOGRAMFILTER {
     container "scilus/scilpy:2.2.0_cpu"
 
     input:
-        tuple val(meta), path(trk), path(mask1), path(mask2)
+        tuple val(meta), path(ANO), path(trk)
 
     output:
-        tuple val(meta), path("*_filtered.trk"), emit: trk_filtered
-        path "versions.yml"                   , emit: versions
+        tuple val(meta), path("*.trk")                      , emit: trk_filtered
+        tuple val(meta), path("*_in.nii.gz")                , emit: mask_includ
+        tuple val(meta), path("*_ex.nii.gz")                , emit: mask_exclud
+        tuple val(meta), path("*_tracking_mqc.png")         , emit: mqc
+        tuple val(meta), path("*_tracking_stats_mqc.json")  , emit: mqc_json
+        path "versions.yml"                                 , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def suffix = task.ext.first_suffix ? "${task.ext.first_suffix}_filtered" : "filtered"
+    def suffix = task.ext.first_suffix ?: task.ext.suffix
     def mode_mask1 = task.ext.mode_mask1 ?: "any"
     def mode_mask2 = task.ext.mode_mask2 ?: "any"
     def criteria_mask1 = task.ext.criteria_mask1 ?: "include"
-    def criteria_mask2 = task.ext.criteria_mask2 ?: "include"
+    def criteria_mask2 = task.ext.criteria_mask2 ?: "exclude"
     def alpha = task.ext.alpha ?: "0.6"
+    def labels_ex = task.ext.labels_ids_ex
+    def labels_in = task.ext.labels_ids_in
+    
+    def run_qc = task.ext.run_qc ? task.ext.run_qc : false
 
     """
+    scil_labels_combine ${prefix}_${suffix}_in.nii.gz --merge_groups \
+        --volume_ids ${ANO} ${labels_in} -f
+    scil_labels_combine ${prefix}_${suffix}_ex.nii.gz --merge_groups \
+        --volume_ids ${ANO} ${labels_ex} -f
+
     scil_tractogram_filter_by_roi ${trk} ${prefix}__tmp.trk \
-        --drawn_roi ${mask1} ${mode_mask1} ${criteria_mask1} \
-        --drawn_roi ${mask2} ${mode_mask2} ${criteria_mask2}
+        --drawn_roi ${prefix}_${suffix}_in.nii.gz ${mode_mask1} ${criteria_mask1} \
+        --drawn_roi ${prefix}_${suffix}_ex.nii.gz ${mode_mask2} ${criteria_mask2}
     
     scil_bundle_reject_outliers ${prefix}__tmp.trk ${prefix}__${suffix}.trk --alpha ${alpha}
+
+    if $run_qc;
+    then
+
+        # Create dummy image for visualization
+        scil_tractogram_compute_density_map ${prefix}__${suffix}.trk \
+            tmp_anat_qc.nii.gz -f
+
+        scil_viz_bundle_screenshot_mosaic tmp_anat_qc.nii.gz ${prefix}__${suffix}.trk\
+            ${prefix}__${suffix}_tracking_mqc.png --opacity_background 1 --light_screenshot
+        scil_tractogram_print_info ${prefix}__${suffix}.trk >> ${prefix}__${suffix}_tracking_stats_mqc.json
+    fi
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -38,12 +63,13 @@ process MOUSE_TRACTOGRAMFILTER {
 
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def suffix = task.ext.first_suffix ? "${task.ext.first_suffix}_filtered" : "filtered"
+    def suffix = task.ext.first_suffix ?: task.ext.suffix
     """
+    scil_labels_combine -h
     scil_tractogram_filter_by_roi -h
     scil_bundle_reject_outliers -h
 
-    touch ${prefix}__${suffix}.trk
+    touch ${prefix}_${suffix}.trk
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
