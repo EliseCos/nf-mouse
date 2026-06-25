@@ -62,6 +62,15 @@ output:
       description: B-vectors corrected in FSL format
       pattern: "*__dwi_eddy_corrected.bvec"
 
+  - eddy_fd_mqc:
+      - "*__dwi_eddy_restricted_movement_rms.txt":
+          type: file
+          description: |
+            Text file containing framewise displacement (restricted movement)
+            information from eddy. Made for use in MultiQC report.
+          pattern: "*__dwi_eddy_restricted_movement_rms.txt"
+          ontologies: []
+
   - versions:
       type: file
       description: File containing software versions

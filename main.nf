@@ -145,6 +145,7 @@ workflow {
         ch_after_eddy = PREPROC_SINGLEEDDY.out.dwi_corrected.join(
             PREPROC_SINGLEEDDY.out.bval_corrected).join(
             PREPROC_SINGLEEDDY.out.bvec_corrected)
+        ch_multiqc_files = ch_multiqc_files.mix(PREPROC_SINGLEEDDY.out.eddy_fd_mqc)
     }
     else {
         ch_after_eddy = ch_eddy
@@ -160,8 +161,9 @@ workflow {
     }
     else {
         ch_nnunet = ch_after_eddy.join(UTILS_EXTRACTB0.out.b0)
-                .map { meta, dwi, bval, bvec, b0 ->   
-                    [meta, dwi, bval, b0 ?: [   ]]}
+        .join(data.mask, by: 0, remainder: true)
+                .map { meta, dwi, bval, bvec, b0, mask ->   
+                    [meta, dwi, bval, b0, mask ?: [   ]]}
         
         NNUNET(ch_nnunet)
         

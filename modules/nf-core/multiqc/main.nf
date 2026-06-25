@@ -3,7 +3,9 @@ process MULTIQC {
     label 'process_single'
 
     conda "${moduleDir}/environment.yml"
-    container "${ 'multiqc/multiqc:v1.31' }"
+    container "gagnonanthony/multiqc-neuroimaging:0.1.0"
+        containerOptions((workflow.containerEngine == 'docker') ? '--entrypoint "" --user $(id -u):$(id -g)' : '')
+
 
     input:
     tuple val(meta), path(qc_images) // Added input with subject meta field.
@@ -58,6 +60,7 @@ process MULTIQC {
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         multiqc: \$( multiqc --version | sed -e "s/multiqc, version //g" )
+        neuroimaging: \$( pip list | grep neuroimaging | awk '{print \$2}' )
     END_VERSIONS
     """
 }
