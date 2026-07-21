@@ -15,7 +15,10 @@ include { RECONST_FODF } from './modules/nf-neuro/reconst/fodf/main.nf'
 include { RECONST_QBALL } from './modules/nf-neuro/reconst/qball/main.nf'
 include { TRACKING_MASK } from './modules/local/tracking/mask/main.nf'
 include { TRACKING_LOCALTRACKING } from './modules/nf-neuro/tracking/localtracking/main.nf'
-include { MOUSE_TRACTOGRAMFILTER as FORNIX_BUNDLE} from './modules/local/mouse/tractogramfilter/main.nf'
+include { MOUSE_TRACTOGRAMFILTER as AC_BUNDLE} from './modules/local/mouse/tractogramfilter/main.nf'
+include { MOUSE_TRACTOGRAMFILTER as CC_BUNDLE} from './modules/local/mouse/tractogramfilter/main.nf'
+include { MOUSE_TRACTOGRAMFILTER as Fx_BUNDLE} from './modules/local/mouse/tractogramfilter/main.nf'
+include { MOUSE_TRACTOGRAMFILTER as Fx_MS_BUNDLE} from './modules/local/mouse/tractogramfilter/main.nf'
 include { MOUSE_EXTRACTMASKS } from './modules/local/mouse/extractmasks/main.nf'
 include { MOUSE_VOLUMEROISTATS } from './modules/local/mouse/volumeroistats/main.nf'
 include { STATS_METRICSINROI as STATS_AMBA } from './modules/nf-neuro/stats/metricsinroi/main'
@@ -161,8 +164,9 @@ workflow {
     }
     else {
         ch_nnunet = ch_after_eddy.join(UTILS_EXTRACTB0.out.b0)
-                .map { meta, dwi, bval, bvec, b0 ->   
-                    [meta, dwi, bval, b0 ?: [   ]]}
+        .join(data.mask, by: 0, remainder: true)
+                .map { meta, dwi, bval, bvec, b0, mask ->   
+                    [meta, dwi, bval, b0, mask ?: [   ]]}
         
         NNUNET(ch_nnunet)
         
@@ -244,8 +248,14 @@ workflow {
         ch_for_filter = MOUSE_REGISTRATION.out.ANO
                         .join(TRACKING_LOCALTRACKING.out.trk)
 
-        FORNIX_BUNDLE(ch_for_filter)
-        ch_multiqc_files = ch_multiqc_files.mix(FORNIX_BUNDLE.out.mqc)
+        AC_BUNDLE(ch_for_filter)
+        ch_multiqc_files = ch_multiqc_files.mix(AC_BUNDLE.out.mqc)
+        CC_BUNDLE(ch_for_filter)
+        ch_multiqc_files = ch_multiqc_files.mix(CC_BUNDLE.out.mqc)
+        Fx_BUNDLE(ch_for_filter)
+        ch_multiqc_files = ch_multiqc_files.mix(Fx_BUNDLE.out.mqc)
+        Fx_MS_BUNDLE(ch_for_filter)
+        ch_multiqc_files = ch_multiqc_files.mix(Fx_MS_BUNDLE.out.mqc)
     }
 
     MOUSE_EXTRACTMASKS(MOUSE_REGISTRATION.out.ANO)
