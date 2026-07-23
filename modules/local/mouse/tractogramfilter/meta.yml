@@ -1,0 +1,50 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/scilus/nf-neuro/main/modules/meta-schema.json
+name: "tractogram_filter"
+description: Apply Eddy (and Topup if already run)
+keywords:
+  - tractogram
+  - bundles
+  - segmentation
+tools:
+  - "scilpy":
+      description: "The Sherbrooke Connectivity Imaging Lab (SCIL) Python dMRI processing toolbox."
+      homepage: "https://github.com/scilus/scilpy.git"
+input:
+  # Only when we have meta
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. `[ id:'test', single_end:false ]`
+
+  - dwi:
+      type: file
+      description: DWI Nifti image
+      pattern: "*.{nii,nii.gz}"
+
+  - trk:
+      type: file
+      description: B-values in FSL format [DWI].
+      pattern: "*.trk"
+
+output:
+  #Only when we have meta
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. `[ id:'test', single_end:false ]`
+
+  - trk_filtered:
+      type: file
+      description: Nifti volume - DWI corrected
+      pattern: "*_tract-*_tractogram.trk"
+
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+
+authors:
+  - "@EliseCos"

@@ -1,78 +1,109 @@
 {
-  "name": "",
-  "homePage": "",
-  "repos": {
-    "https://github.com/nf-core/modules.git": {
-      "modules": {
-        "nf-core": {
-          "multiqc": {
-            "branch": "master",
-            "git_sha": "e10b76ca0c66213581bec2833e30d31f239dec0b",
-            "installed_by": ["modules"]
-          }
+    "name": "",
+    "homePage": "",
+    "repos": {
+        "https://github.com/nf-core/modules.git": {
+            "modules": {
+                "nf-core": {
+                    "multiqc": {
+                        "branch": "master",
+                        "git_sha": "e10b76ca0c66213581bec2833e30d31f239dec0b",
+                        "installed_by": [
+                            "modules"
+                        ]
+                    }
+                }
+            }
+        },
+        "https://github.com/nf-neuro/modules.git": {
+            "modules": {
+                "nf-neuro": {
+                    "denoising/mppca": {
+                        "branch": "main",
+                        "git_sha": "1c7984a32135efc6547518cff5724312013bcd4f",
+                        "installed_by": [
+                            "modules"
+                        ]
+                    },
+                    "image/convert": {
+                        "branch": "main",
+                        "git_sha": "0d983f0f2bddd155cfb9ac3080747850157fd9c8",
+                        "installed_by": [
+                            "modules"
+                        ]
+                    },
+                    "image/powderaverage": {
+                        "branch": "main",
+                        "git_sha": "44a8807e115f15d720ff952229c7d7540952b587",
+                        "installed_by": [
+                            "modules"
+                        ]
+                    },
+                    "image/resample": {
+                        "branch": "main",
+                        "git_sha": "a3fbaa40d649f221b099322105936afe09115c0c",
+                        "installed_by": [
+                            "modules"
+                        ]
+                    },
+                    "qc/multiqc": {
+                        "branch": "main",
+                        "git_sha": "a7ff2bbe8248fbddbe543c1e8ecb981bf2ceee47",
+                        "installed_by": [
+                            "modules"
+                        ]
+                    },
+                    "reconst/dtimetrics": {
+                        "branch": "main",
+                        "git_sha": "0fdd04fbe05e37bfe1273d23e1d49018297ea7de",
+                        "installed_by": [
+                            "modules"
+                        ]
+                    },
+                    "reconst/fodf": {
+                        "branch": "main",
+                        "git_sha": "0fdd04fbe05e37bfe1273d23e1d49018297ea7de",
+                        "installed_by": [
+                            "modules"
+                        ]
+                    },
+                    "reconst/frf": {
+                        "branch": "main",
+                        "git_sha": "a51881f1c316e0e52b68fa66d7465c32339e2142",
+                        "installed_by": [
+                            "modules"
+                        ]
+                    },
+                    "reconst/qball": {
+                        "branch": "main",
+                        "git_sha": "5420aa212ac5ad3f255f50ca5b0d5995693f8c35",
+                        "installed_by": [
+                            "modules"
+                        ]
+                    },
+                    "stats/metricsinroi": {
+                        "branch": "main",
+                        "git_sha": "ca21922a7affe217f7391a98b5af1e50a79f094c",
+                        "installed_by": [
+                            "modules"
+                        ]
+                    },
+                    "tracking/localtracking": {
+                        "branch": "main",
+                        "git_sha": "ec4f04fd25e3167ba495094925027248722c1aad",
+                        "installed_by": [
+                            "modules"
+                        ]
+                    },
+                    "utils/extractb0": {
+                        "branch": "main",
+                        "git_sha": "0245a01f7ab9bec0753e2235fba489e3353f1a33",
+                        "installed_by": [
+                            "modules"
+                        ]
+                    }
+                }
+            }
         }
-      }
-    },
-    "https://github.com/nf-neuro/modules.git": {
-      "modules": {
-        "nf-neuro": {
-          "denoising/mppca": {
-            "branch": "main",
-            "git_sha": "1c7984a32135efc6547518cff5724312013bcd4f",
-            "installed_by": ["modules"]
-          },
-          "image/convert": {
-            "branch": "main",
-            "git_sha": "0d983f0f2bddd155cfb9ac3080747850157fd9c8",
-            "installed_by": ["modules"]
-          },
-          "image/powderaverage": {
-            "branch": "main",
-            "git_sha": "44a8807e115f15d720ff952229c7d7540952b587",
-            "installed_by": ["modules"]
-          },
-          "image/resample": {
-            "branch": "main",
-            "git_sha": "a3fbaa40d649f221b099322105936afe09115c0c",
-            "installed_by": ["modules"]
-          },
-          "reconst/dtimetrics": {
-            "branch": "main",
-            "git_sha": "0fdd04fbe05e37bfe1273d23e1d49018297ea7de",
-            "installed_by": ["modules"]
-          },
-          "reconst/fodf": {
-            "branch": "main",
-            "git_sha": "0fdd04fbe05e37bfe1273d23e1d49018297ea7de",
-            "installed_by": ["modules"]
-          },
-          "reconst/frf": {
-            "branch": "main",
-            "git_sha": "a51881f1c316e0e52b68fa66d7465c32339e2142",
-            "installed_by": ["modules"]
-          },
-          "reconst/qball": {
-            "branch": "main",
-            "git_sha": "5420aa212ac5ad3f255f50ca5b0d5995693f8c35",
-            "installed_by": ["modules"]
-          },
-          "stats/metricsinroi": {
-            "branch": "main",
-            "git_sha": "ca21922a7affe217f7391a98b5af1e50a79f094c",
-            "installed_by": ["modules"]
-          },
-          "tracking/localtracking": {
-            "branch": "main",
-            "git_sha": "ec4f04fd25e3167ba495094925027248722c1aad",
-            "installed_by": ["modules"]
-          },
-          "utils/extractb0": {
-            "branch": "main",
-            "git_sha": "0245a01f7ab9bec0753e2235fba489e3353f1a33",
-            "installed_by": ["modules"]
-          }
-        }
-      }
     }
-  }
 }

@@ -8,7 +8,7 @@ process MOUSE_TRACTOGRAMFILTER {
         tuple val(meta), path(ANO), path(trk)
 
     output:
-        tuple val(meta), path("*.trk")                      , emit: trk_filtered
+        tuple val(meta), path("*_tract-*_tractogram.trk")   , emit: trk_filtered
         tuple val(meta), path("*_in.nii.gz")                , emit: mask_includ
         tuple val(meta), path("*_ex.nii.gz")                , emit: mask_exclud
         tuple val(meta), path("*_tracking_mqc.png")         , emit: mqc
@@ -41,18 +41,20 @@ process MOUSE_TRACTOGRAMFILTER {
         --drawn_roi ${prefix}_${suffix}_in.nii.gz ${mode_mask1} ${criteria_mask1} \
         --drawn_roi ${prefix}_${suffix}_ex.nii.gz ${mode_mask2} ${criteria_mask2}
     
-    scil_bundle_reject_outliers ${prefix}__tmp.trk ${prefix}__${suffix}.trk --alpha ${alpha}
+    scil_bundle_reject_outliers ${prefix}__tmp.trk ${prefix}_tract-${suffix}_tractogram.trk --alpha ${alpha}
+
+    rm -f ${prefix}__tmp.trk
 
     if $run_qc;
     then
 
         # Create dummy image for visualization
-        scil_tractogram_compute_density_map ${prefix}__${suffix}.trk \
+        scil_tractogram_compute_density_map ${prefix}_tract-${suffix}_tractogram.trk \
             tmp_anat_qc.nii.gz -f
 
-        scil_viz_bundle_screenshot_mosaic tmp_anat_qc.nii.gz ${prefix}__${suffix}.trk\
+        scil_viz_bundle_screenshot_mosaic tmp_anat_qc.nii.gz ${prefix}_tract-${suffix}_tractogram.trk\
             ${prefix}__${suffix}_tracking_mqc.png --opacity_background 1 --light_screenshot
-        scil_tractogram_print_info ${prefix}__${suffix}.trk >> ${prefix}__${suffix}_tracking_stats_mqc.json
+        scil_tractogram_print_info ${prefix}_tract-${suffix}_tractogram.trk >> ${prefix}__${suffix}_tracking_stats_mqc.json
     fi
 
     cat <<-END_VERSIONS > versions.yml
@@ -69,7 +71,7 @@ process MOUSE_TRACTOGRAMFILTER {
     scil_tractogram_filter_by_roi -h
     scil_bundle_reject_outliers -h
 
-    touch ${prefix}_${suffix}.trk
+    touch ${prefix}_tract-${suffix}_tractogram.trk
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

@@ -15,6 +15,8 @@ report_section_order:
     order: -700    
   tracking_qc:
     order: -800
+  bundles:
+    order: -900
 
 custom_data:
   pre_qc_rgb:
@@ -90,3 +92,7 @@ sp:
     fn: "*_mask_tracking_mqc.png"
   tracking_qc:
     fn: "*local_tracking_mqc.png"
+  bundles/trk:
+    fn: "*.trk"
+  bundles/nii:
+    fn: "*_mask_uint8_converted.nii.gz"

@@ -28,7 +28,7 @@ include { MOUSE_CONVERTJSON as CONVERTJSON_AMBA_LR } from './modules/local/mouse
 include { MOUSE_COMBINESTATS as COMBINESTATS_AMBA } from './modules/local/mouse/combinestats/main.nf'
 include { MOUSE_COMBINESTATS as COMBINESTATS_AMBA_LR } from './modules/local/mouse/combinestats/main.nf'
 include { MOUSE_COMBINESTATS as COMBINESTATS_MERGED} from './modules/local/mouse/combinestats/main.nf'
-include { MULTIQC } from "./modules/nf-core/multiqc/main"
+include { QC_MULTIQC } from "./modules/nf-neuro/qc/multiqc/main.nf"
 include { PRE_QC } from './modules/local/mouse/preqc/main.nf'
 
 
@@ -194,6 +194,7 @@ workflow {
 
         dwi_after_resample = RESAMPLE_DWI.out.image
         mask_after_resample = IMAGE_CONVERT.out.image
+        ch_bundle_background = mask_after_resample
     }
     else {
         dwi_after_resample = ch_after_n4
@@ -249,13 +250,16 @@ workflow {
                         .join(TRACKING_LOCALTRACKING.out.trk)
 
         AC_BUNDLE(ch_for_filter)
-        ch_multiqc_files = ch_multiqc_files.mix(AC_BUNDLE.out.mqc)
+        ch_multiqc_files = ch_multiqc_files.mix(AC_BUNDLE.out.trk_filtered)
         CC_BUNDLE(ch_for_filter)
-        ch_multiqc_files = ch_multiqc_files.mix(CC_BUNDLE.out.mqc)
+        ch_multiqc_files = ch_multiqc_files.mix(CC_BUNDLE.out.trk_filtered)
         Fx_BUNDLE(ch_for_filter)
-        ch_multiqc_files = ch_multiqc_files.mix(Fx_BUNDLE.out.mqc)
+        ch_multiqc_files = ch_multiqc_files.mix(Fx_BUNDLE.out.trk_filtered)
         Fx_MS_BUNDLE(ch_for_filter)
-        ch_multiqc_files = ch_multiqc_files.mix(Fx_MS_BUNDLE.out.mqc)
+        ch_multiqc_files = ch_multiqc_files.mix(Fx_MS_BUNDLE.out.trk_filtered)
+
+        ch_multiqc_files = ch_multiqc_files.mix(mask_after_resample)
+
     }
 
     MOUSE_EXTRACTMASKS(MOUSE_REGISTRATION.out.ANO)
@@ -299,5 +303,5 @@ workflow {
         return tuple(meta, files)
     }
 
-    MULTIQC(ch_multiqc_files, [], ch_multiqc_config.toList(), [], channel.fromPath("${projectDir}/assets/sf-mouse-light-logo.png").toList(), [], [])
+    QC_MULTIQC(ch_multiqc_files, [], ch_multiqc_config.toList(), [], channel.fromPath("${projectDir}/assets/sf-mouse-light-logo.png").toList(), [], [])
 }
