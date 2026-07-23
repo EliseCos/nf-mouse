@@ -18,6 +18,9 @@ report_section_order:
   bundles:
     order: -900
 
+module_order:
+  - framewise_displacement
+
 custom_data:
   pre_qc_rgb:
     file_format: "png"
@@ -96,3 +99,11 @@ sp:
     fn: "*.trk"
   bundles/nii:
     fn: "*_mask_uint8_converted.nii.gz"
+
+# Customisable module parameters
+framewise_displacement:
+  warn_threshold: 0.05
+  fail_threshold: 0.12
+  unit: "µm"
+
+export_plots: true
