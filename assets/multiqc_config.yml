@@ -3,16 +3,18 @@ report_comment: >
   analysis pipeline.
 
 report_section_order:
-  pre_qc_rgb:
+  framewise_displacement:
     order: -200
-  pre_qc_sampling_mqc:
+  pre_qc_rgb:
     order: -300
-  registration_qc:
+  pre_qc_sampling_mqc:
     order: -500
-  dti_qc:
+  registration_qc:
     order: -600
+  dti_qc:
+    order: -700
   tracking_mask_qc:
-    order: -700    
+    order: -800    
   tracking_qc:
     order: -800
   bundles:
@@ -83,6 +85,8 @@ custom_data:
     plot_type: "image"
 
 sp:
+  framewise_displacement:
+    fn: "*dwi_eddy_restricted_movement_rms.txt"
   pre_qc_rgb:
     fn: "*rgb_mqc.png"
   pre_qc_sampling_mqc:

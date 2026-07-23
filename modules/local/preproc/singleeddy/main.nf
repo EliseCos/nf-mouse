@@ -7,10 +7,11 @@ process PREPROC_SINGLEEDDY {
     input:
         tuple val(meta), path(dwi), path(bval), path(bvec)
     output:
-        tuple val(meta), path("*__dwi_eddy_corrected.nii.gz")   , emit: dwi_corrected
-        tuple val(meta), path("*__dwi_eddy_corrected.bval")     , emit: bval_corrected
-        tuple val(meta), path("*__dwi_eddy_corrected.bvec")     , emit: bvec_corrected
-        path "versions.yml"                                     , emit: versions
+        tuple val(meta), path("*__dwi_eddy_corrected.nii.gz")               , emit: dwi_corrected
+        tuple val(meta), path("*__dwi_eddy_corrected.bval")                 , emit: bval_corrected
+        tuple val(meta), path("*__dwi_eddy_corrected.bvec")                 , emit: bvec_corrected
+        tuple val(meta), path("*__dwi_eddy_restricted_movement_rms.txt")    , emit: eddy_fd_mqc, optional:true
+        path "versions.yml"                                                 , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -42,9 +43,11 @@ process PREPROC_SINGLEEDDY {
 
     echo "--nthr=$extra_thr --very_verbose $extra_args --niter=$extra_ite" >> eddy.sh
 	sh eddy.sh
-	mv ${prefix}__.nii.gz ${prefix}__dwi_eddy_corrected.nii.gz
+    mv ${prefix}__.nii.gz ${prefix}__dwi_eddy_corrected.nii.gz
 	mv ${prefix}__.eddy_rotated_bvecs ${prefix}__dwi_eddy_corrected.bvec
     mv ${bval} ${prefix}__dwi_eddy_corrected.bval
+    mv ${prefix}__.eddy_restricted_movement_rms ${prefix}__dwi_eddy_restricted_movement_rms.txt
+
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -63,6 +66,7 @@ process PREPROC_SINGLEEDDY {
     touch ${prefix}__dwi_eddy_corrected.nii.gz
     touch ${prefix}__dwi_eddy_corrected.bval
     touch ${prefix}__dwi_eddy_corrected.bvec
+    touch ${prefix}__dwi_eddy_restricted_movement_rms.txt
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
