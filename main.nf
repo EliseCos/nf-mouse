@@ -15,6 +15,10 @@ include { RECONST_FODF } from './modules/nf-neuro/reconst/fodf/main.nf'
 include { RECONST_QBALL } from './modules/nf-neuro/reconst/qball/main.nf'
 include { TRACKING_MASK } from './modules/local/tracking/mask/main.nf'
 include { TRACKING_LOCALTRACKING } from './modules/nf-neuro/tracking/localtracking/main.nf'
+include { MOUSE_TRACTOGRAMFILTER as AC_BUNDLE} from './modules/local/mouse/tractogramfilter/main.nf'
+include { MOUSE_TRACTOGRAMFILTER as CC_BUNDLE} from './modules/local/mouse/tractogramfilter/main.nf'
+include { MOUSE_TRACTOGRAMFILTER as Fx_BUNDLE} from './modules/local/mouse/tractogramfilter/main.nf'
+include { MOUSE_TRACTOGRAMFILTER as Fx_MS_BUNDLE} from './modules/local/mouse/tractogramfilter/main.nf'
 include { MOUSE_EXTRACTMASKS } from './modules/local/mouse/extractmasks/main.nf'
 include { MOUSE_VOLUMEROISTATS } from './modules/local/mouse/volumeroistats/main.nf'
 include { STATS_METRICSINROI as STATS_AMBA } from './modules/nf-neuro/stats/metricsinroi/main'
@@ -24,7 +28,7 @@ include { MOUSE_CONVERTJSON as CONVERTJSON_AMBA_LR } from './modules/local/mouse
 include { MOUSE_COMBINESTATS as COMBINESTATS_AMBA } from './modules/local/mouse/combinestats/main.nf'
 include { MOUSE_COMBINESTATS as COMBINESTATS_AMBA_LR } from './modules/local/mouse/combinestats/main.nf'
 include { MOUSE_COMBINESTATS as COMBINESTATS_MERGED} from './modules/local/mouse/combinestats/main.nf'
-include { MULTIQC } from "./modules/nf-core/multiqc/main"
+include { QC_MULTIQC } from "./modules/nf-neuro/qc/multiqc/main.nf"
 include { PRE_QC } from './modules/local/mouse/preqc/main.nf'
 
 
@@ -191,6 +195,7 @@ workflow {
 
         dwi_after_resample = RESAMPLE_DWI.out.image
         mask_after_resample = IMAGE_CONVERT.out.image
+        ch_bundle_background = mask_after_resample
     }
     else {
         dwi_after_resample = ch_after_n4
@@ -241,6 +246,21 @@ workflow {
                     .join(reconst_sh)
                     .join(TRACKING_MASK.out.seeding_mask))
         ch_multiqc_files = ch_multiqc_files.mix(TRACKING_LOCALTRACKING.out.mqc)
+
+        ch_for_filter = TRACKING_LOCALTRACKING.out.trk
+                        .join(MOUSE_REGISTRATION.out.ANO)
+
+        AC_BUNDLE(ch_for_filter)
+        ch_multiqc_files = ch_multiqc_files.mix(AC_BUNDLE.out.trk_filtered)
+        CC_BUNDLE(ch_for_filter)
+        ch_multiqc_files = ch_multiqc_files.mix(CC_BUNDLE.out.trk_filtered)
+        Fx_BUNDLE(ch_for_filter)
+        ch_multiqc_files = ch_multiqc_files.mix(Fx_BUNDLE.out.trk_filtered)
+        Fx_MS_BUNDLE(ch_for_filter)
+        ch_multiqc_files = ch_multiqc_files.mix(Fx_MS_BUNDLE.out.trk_filtered)
+
+        ch_multiqc_files = ch_multiqc_files.mix(mask_after_resample)
+
     }
 
     MOUSE_EXTRACTMASKS(MOUSE_REGISTRATION.out.ANO)
@@ -284,5 +304,5 @@ workflow {
         return tuple(meta, files)
     }
 
-    MULTIQC(ch_multiqc_files, [], ch_multiqc_config.toList(), [], channel.fromPath("${projectDir}/assets/sf-mouse-light-logo.png").toList(), [], [])
+    QC_MULTIQC(ch_multiqc_files, [], ch_multiqc_config.toList(), [], channel.fromPath("${projectDir}/assets/sf-mouse-light-logo.png").toList(), [], [])
 }
