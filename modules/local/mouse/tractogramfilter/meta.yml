@@ -1,50 +1,87 @@
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/scilus/nf-neuro/main/modules/meta-schema.json
-name: "tractogram_filter"
-description: Extract bundles from the tractogram
+
+name: mouse_tractogramfilter
+
+description: |
+  Generate inclusion and exclusion masks from an annotation volume,
+  filter a tractogram using these masks, and reject outlier streamlines.
+
 keywords:
   - tractogram
   - bundles
   - segmentation
+
 tools:
   - "scilpy":
       description: "The Sherbrooke Connectivity Imaging Lab (SCIL) Python dMRI processing toolbox."
       homepage: "https://github.com/scilus/scilpy.git"
+
 input:
-  # Only when we have meta
-  - meta:
-      type: map
-      description: |
-        Groovy Map containing sample information
-        e.g. `[ id:'test', single_end:false ]`
+  - - meta:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. `[ id:'test', single_end:false ]`
 
-  - dwi:
-      type: file
-      description: DWI Nifti image
-      pattern: "*.{nii,nii.gz}"
+    - ano:
+        type: file
+        description: |
+          NIfTI annotation volume used to generate
+          the inclusion and exclusion masks.
+        pattern: "*.{nii,nii.gz}"
 
-  - trk:
-      type: file
-      description: B-values in FSL format [DWI].
-      pattern: "*.trk"
+    - trk:
+        type: file
+        description: Input tractogram in .trk format.
+        pattern: "*.trk"
 
 output:
-  #Only when we have meta
-  - meta:
-      type: map
-      description: |
-        Groovy Map containing sample information
-        e.g. `[ id:'test', single_end:false ]`
+  trk_filtered:
+    - - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id:'test', single_end:false ]`
 
-  - trk_filtered:
-      type: file
-      description: Nifti volume - DWI corrected
-      pattern: "*_tract-*_tractogram.trk"
+      - trk_filtered:
+          type: file
+          description: |
+            Filtered tractogram after ROI filtering and
+            rejection of outlier streamlines.
+          pattern: "*_tract-*_tractogram.trk"
 
-  - versions:
-      type: file
-      description: File containing software versions
-      pattern: "versions.yml"
+  mask_include:
+    - - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id:'test', single_end:false ]`
+
+      - mask_include:
+          type: file
+          description: |
+            Inclusion mask generated from the annotation volume.
+          pattern: "*_in.nii.gz"
+
+  mask_exclude:
+    - - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id:'test', single_end:false ]`
+
+      - mask_exclude:
+          type: file
+          description: |
+            Exclusion mask generated from the annotation volume.
+          pattern: "*_ex.nii.gz"
+
+  versions:
+    - versions:
+        type: file
+        description: File containing software versions.
+        pattern: "versions.yml"
 
 authors:
   - "@EliseCos"
