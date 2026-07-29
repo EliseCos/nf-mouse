@@ -5,12 +5,12 @@ process MOUSE_TRACTOGRAMFILTER {
     container "scilus/scilpy:2.2.0_cpu"
 
     input:
-        tuple val(meta), path(ANO), path(trk)
+        tuple val(meta), path(trk), path(ANO)
 
     output:
         tuple val(meta), path("*_tract-*_tractogram.trk")   , emit: trk_filtered
-        tuple val(meta), path("*_in.nii.gz")                , emit: mask_includ
-        tuple val(meta), path("*_ex.nii.gz")                , emit: mask_exclud
+        tuple val(meta), path("*_in.nii.gz")                , emit: mask_include
+        tuple val(meta), path("*_ex.nii.gz")                , emit: mask_exclude
         path "versions.yml"                                 , emit: versions
 
     when:
