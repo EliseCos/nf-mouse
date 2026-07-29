@@ -247,8 +247,8 @@ workflow {
                     .join(TRACKING_MASK.out.seeding_mask))
         ch_multiqc_files = ch_multiqc_files.mix(TRACKING_LOCALTRACKING.out.mqc)
 
-        ch_for_filter = MOUSE_REGISTRATION.out.ANO
-                        .join(TRACKING_LOCALTRACKING.out.trk)
+        ch_for_filter = TRACKING_LOCALTRACKING.out.trk
+                        .join(MOUSE_REGISTRATION.out.ANO)
 
         AC_BUNDLE(ch_for_filter)
         ch_multiqc_files = ch_multiqc_files.mix(AC_BUNDLE.out.trk_filtered)
