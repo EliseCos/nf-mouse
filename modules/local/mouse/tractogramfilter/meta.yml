@@ -1,7 +1,7 @@
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/scilus/nf-neuro/main/modules/meta-schema.json
 name: "tractogram_filter"
-description: Apply Eddy (and Topup if already run)
+description: Extract bundles from the tractogram
 keywords:
   - tractogram
   - bundles
