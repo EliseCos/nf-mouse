@@ -34,8 +34,6 @@ workflow NNUNET {
 
         ch_for_bet = PREPARE_NNUNET_DWI.out.nnunetready
             .join(PREPARE_NNUNET_B0.out.nnunetready, by: 0, remainder: true)
-            .map { meta, dwi, b0 ->   
-                [meta, dwi, b0]}  // Use empty list if mask is null
 
         MOUSE_BETNNUNET(ch_for_bet)
 
